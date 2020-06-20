@@ -65,10 +65,10 @@ class Zaehlerstand:
         print('Digital Model Init Done')
 
         self.CutImage = lib.CutImageClass.CutImage(self.readConfig)
-        print('Digital Model Init Done')
+        print('CutImage Init Done')
         self.LoadFileFromHTTP = lib.LoadFileFromHTTPClass.LoadFileFromHttp()
 
-        self.ConsistencyEnabled = False        
+        self.ConsistencyEnabled = False
         if config.has_option('ConsistencyCheck', 'Enabled'):
             self.ConsistencyEnabled = config['ConsistencyCheck']['Enabled']
             if self.ConsistencyEnabled.upper() == 'TRUE':
@@ -105,7 +105,7 @@ class Zaehlerstand:
             else:
                 ErrorText = self.readAnalogNeedle.GlobalErrorText
         return ErrorText
-        
+
 
     def CheckAndLoadDefaultConfig(self):
         defaultdir = "./config_default/"
@@ -133,7 +133,7 @@ class Zaehlerstand:
             result = self.LastVorkomma
 
         self.prevalueStoreToFile(logtime)
-        
+
         result = 'Last value set to: ' + result
         return result
 
@@ -153,13 +153,13 @@ class Zaehlerstand:
         logtime = config['PreValue']['Time']
         safetime = time.strptime(logtime, '%Y-%m-%d_%H-%M-%S')
         nowtime = time.strftime('%Y-%m-%d_%H-%M-%S', time.localtime())
-        
+
         fmt = '%Y-%m-%d_%H-%M-%S'
 #        d1 = datetime.strptime(nowtime, fmt)
         d1 = datetime.now()
         d2 = datetime.strptime(logtime, fmt)
         unterschied = (d1-d2).days * 24 * 60
-        
+
         if unterschied <= ReadPreValueFromFileMaxAge:
             self.LastVorkomma = config['PreValue']['LastVorkomma']
             self.LastNachkomma = config['PreValue']['LastNachkomma']
@@ -190,7 +190,7 @@ class Zaehlerstand:
             if self.AnalogReadOutEnabled:
                 print('Start CutImage, AnalogReadout, DigitalReadout')
             else:
-                print('Start CutImage, DigitalReadout')            
+                print('Start CutImage, DigitalReadout')
             resultcut = self.CutImage.Cut('./image_tmp/original.jpg')
             self.CutImage.DrawROI('./image_tmp/alg.jpg')  # update ROI
 
@@ -199,7 +199,7 @@ class Zaehlerstand:
             if self.AnalogReadOutEnabled:
                 resultanalog = self.readAnalogNeedle.Readout(resultcut[0], logtime)
             resultdigital = self.readDigitalDigit.Readout(resultcut[1], logtime)
-            
+
             self.akt_nachkomma = 0
             if self.AnalogReadOutEnabled:
                 self.akt_nachkomma = self.AnalogReadoutToValue(resultanalog)
@@ -229,21 +229,21 @@ class Zaehlerstand:
             print('Get Zaehlerstand done')
         return txt
 
-    
+
     def getZaehlerstandJSON(self, url, simple = True, UsePreValue = False, single = False, ignoreConsistencyCheck = False):
         #txt = ""
         #logtime="test"
         Value = ""
         Digit = ""
         AnalogCounter = ""
-        Error = ""        
+        Error = ""
         txt, logtime = self.LoadFileFromHTTP.LoadImageFromURL(url, './image_tmp/original.jpg')
 
         if self.AnalogReadOutEnabled:
             zw = self.LastVorkomma.lstrip("0") + "." + self.LastNachkomma
         else:
             zw = self.LastVorkomma.lstrip("0")
-            
+
         preval = {
             "Value": zw,
             "DigitalDigits": self.LastVorkomma,
@@ -254,7 +254,7 @@ class Zaehlerstand:
             if self.AnalogReadOutEnabled:
                 print('Start CutImage, AnalogReadout, DigitalReadout')
             else:
-                print('Start CutImage, DigitalReadout')            
+                print('Start CutImage, DigitalReadout')
             resultcut = self.CutImage.Cut('./image_tmp/original.jpg')
             self.CutImage.DrawROI('./image_tmp/alg.jpg')  # update ROI
 
@@ -263,7 +263,7 @@ class Zaehlerstand:
             if self.AnalogReadOutEnabled:
                 resultanalog = self.readAnalogNeedle.Readout(resultcut[0], logtime)
             resultdigital = self.readDigitalDigit.Readout(resultcut[1], logtime)
-            
+
             self.akt_nachkomma = 0
             if self.AnalogReadOutEnabled:
                 self.akt_nachkomma = self.AnalogReadoutToValue(resultanalog)
@@ -365,8 +365,8 @@ class Zaehlerstand:
         error = False
         errortxt = ''
         if (len(self.LastVorkomma) > 0) and not('N' in self.akt_vorkomma) and self.ConsistencyEnabled:
-            akt_zaehlerstand = float(str(self.akt_vorkomma.lstrip("0")) + '.' + str(self.akt_nachkomma))   
-            old_zaehlerstand = float(str(self.LastVorkomma.lstrip("0")) + '.' + str(self.LastNachkomma)) 
+            akt_zaehlerstand = float(str(self.akt_vorkomma.lstrip("0")) + '.' + str(self.akt_nachkomma))
+            old_zaehlerstand = float(str(self.LastVorkomma.lstrip("0")) + '.' + str(self.LastNachkomma))
             delta = akt_zaehlerstand - old_zaehlerstand
             if not(self.AllowNegativeRates) and (delta < 0):
                 error = True
@@ -428,7 +428,7 @@ class Zaehlerstand:
                 overZero = 0
         else:
             UsePreValue = False
-        
+
         for i in range(len(res_digital)-1, -1, -1):
             item = res_digital[i]
             if item == 'NaN':

@@ -9,7 +9,7 @@ import socketserver
 import gc
 
 class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
-    
+
     def do_GET(self):
         global wasserzaehler
         url_parse = parse.urlparse(self.path)
@@ -20,7 +20,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             result = 'Konfiguration wird neu geladen'
-            self.wfile.write(bytes(result, 'UTF-8'))             
+            self.wfile.write(bytes(result, 'UTF-8'))
             del wasserzaehler
             gc.collect()
             wasserzaehler = lib.ZaehlerstandClass.Zaehlerstand()
@@ -32,7 +32,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             self.wfile.write(bytes(result, 'UTF-8'))
-            return            
+            return
 
         GlobalError = wasserzaehler.CheckError()
         if GlobalError is not None:
@@ -42,7 +42,6 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.wfile.write(bytes(GlobalError, 'UTF-8'))
 
             return
-           
 
         if "/image_tmp/" in url_parse.path:
             self.send_response(200)
@@ -50,7 +49,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
             self.send_header('Content-type', 'image/jpg')
             self.send_header('Content-length', size)
             self.end_headers()
-            with open('.'+self.path, 'rb') as file: 
+            with open('.'+self.path, 'rb') as file:
                 self.wfile.write(file.read()) # Read the file and send the contents
             return
 
